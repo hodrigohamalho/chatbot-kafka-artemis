@@ -1,0 +1,20 @@
+== Chatbot 
+
+== Deploy as Camel-K application
+
+    oc create secret generic chatbot --from-file src/main/resources/application.properties
+    kamel run src/main/java/com/redhat/ChatControllerRoute.java --dev --config secret:chatbot
+
+== Deploy as Camel Quarkus Application
+
+Local with Quarkus CLI
+
+    quarkus dev
+
+Local with Maven
+
+    mvn compile quarkus:dev
+
+In Openshift
+
+    ./mvnw clean package -Dquarkus.kubernetes.deploy=true -Dquarkus.kubernetes-client.trust-certs=true -DskipTests
