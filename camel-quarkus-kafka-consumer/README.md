@@ -1,6 +1,6 @@
 # camel-quarkus-kafka-consumer Project
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework. This is an example consumer subscribing to a kafka topic and when messages arrive in that topic it saves the topic messages in mongoDB. Complementing the camel-quarkus-kafka-api project.
+This project uses Quarkus, the Supersonic Subatomic Java Framework. This is an example consumer subscribing to a kafka topic raw messages and when messages arrive in that topic it saves the topic messages in processed Topic . Complementing the chat-bot project.
 
 ## Running the application in dev mode
 

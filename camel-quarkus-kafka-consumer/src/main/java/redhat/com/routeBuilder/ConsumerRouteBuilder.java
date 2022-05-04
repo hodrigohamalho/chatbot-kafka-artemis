@@ -32,7 +32,7 @@ public class ConsumerRouteBuilder extends RouteBuilder{
         .to("direct:insertProcessedTopic")
         ;
 
-        //Route insert object on mongoDB
+        //Route insert object on Processed Topic
         from("direct:insertProcessedTopic").routeId("insertProcessedTopic")        
         .to("kafka:"+ KAFKA_TOPIC_PROCESSED + "?brokers=" + KAFKA_BOOTSTRAP_SERVERS + "&groupId=" + KAFKA_GROUP_ID)
         .log("Message send from Kafka Topic processed : ${body}")
