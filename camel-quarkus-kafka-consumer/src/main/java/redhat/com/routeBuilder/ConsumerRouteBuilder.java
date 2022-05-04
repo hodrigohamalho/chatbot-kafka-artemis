@@ -1,3 +1,4 @@
+//camel-k: language=java dependency=mvn:org.apache.camel.quarkus:camel-quarkus-kafka dependency=mvn:io.strimzi:kafka-client:0.7.1.redhat-00003
 package redhat.com.routeBuilder;
 
 
