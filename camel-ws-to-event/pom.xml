@@ -77,11 +77,11 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- <dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-websockets</artifactId>
-      <scope>teste</scope>
-    </dependency> -->
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <repositories>
     <repository>

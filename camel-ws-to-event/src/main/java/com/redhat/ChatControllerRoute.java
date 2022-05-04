@@ -8,9 +8,9 @@ public class ChatControllerRoute extends RouteBuilder{
     public void configure() throws Exception {
         
         from("vertx-websocket://echo")
-            .log(">>> Message received from WebSocket Client : ${body}");
-        //     .transform().simple("yuhu!")
-        // .to("vertx-websocket://echo");
+            .log(">>> Message received from WebSocket Client : ${body}")
+            .transform().simple("hello")
+        .to("vertx-websocket://echo");
 
     }
     
