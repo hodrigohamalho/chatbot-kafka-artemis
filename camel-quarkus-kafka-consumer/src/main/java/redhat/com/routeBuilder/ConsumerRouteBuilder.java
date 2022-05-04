@@ -18,7 +18,7 @@ import org.bson.types.ObjectId;
 
 public class ConsumerRouteBuilder extends RouteBuilder{
     protected String KAFKA_TOPIC_RAW = "{{kafka.topic.raw}}";
-    protected String KAFKA_TOPIC_PROCESSED = "{{kafka.topic.raw}}";
+    protected String KAFKA_TOPIC_PROCESSED = "{{kafka.topic.processed}}";
     protected String KAFKA_BOOTSTRAP_SERVERS = "{{kafka.bootstrap.servers}}";
     protected String KAFKA_GROUP_ID = "{{kafka.group.id}}";
     @Override
@@ -34,8 +34,11 @@ public class ConsumerRouteBuilder extends RouteBuilder{
         ;
 
         //Route insert object on Processed Topic
-        from("direct:insertProcessedTopic").routeId("insertProcessedTopic")        
-        .to("kafka:"+ KAFKA_TOPIC_PROCESSED + "?brokers=" + KAFKA_BOOTSTRAP_SERVERS + "&groupId=" + KAFKA_GROUP_ID)
+        from("direct:insertProcessedTopic")
+        .routeId("insertProcessedTopic")        
+        .marshal().json()   // marshall message to send to kafka
+        .setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
+        .to("kafka:"+ KAFKA_TOPIC_PROCESSED + "?brokers=" + KAFKA_BOOTSTRAP_SERVERS)
         .log("Message send from Kafka Topic processed : ${body}")
         ;
     }
