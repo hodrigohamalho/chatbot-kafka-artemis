@@ -1,7 +1,9 @@
 // camel-k: language=java dependency=mvn:org.apache.camel.quarkus:camel-quarkus-kafka
-package com.redhat;
+package com.redhat.routeBuilder;
 
 import org.apache.camel.builder.RouteBuilder;
+import com.redhat.models.Message;
+import org.apache.camel.component.jackson.JacksonDataFormat;
 
 public class ChatControllerRoute extends RouteBuilder{
 
@@ -9,23 +11,28 @@ public class ChatControllerRoute extends RouteBuilder{
     protected String KAFKA_TOPIC_PROCESSED = "{{kafka.topic.raw}}";
     protected String KAFKA_BOOTSTRAP_SERVERS = "{{kafka.bootstrap.servers}}";
     protected String KAFKA_GROUP_ID = "{{kafka.group.id}}";
+    protected String ARTEMIS_DESTINATION_NAME_RAW = "{{quarkus.artemis.destinationName.raw}}";
 
     @Override
     public void configure() throws Exception {
         
         from("vertx-websocket://echo")
             .log(">>> Message received from WebSocket Client : ${body} - ${headers}")
-            .wireTap("direct:to-broker")
+            .unmarshal(new JacksonDataFormat(Message.class))
+            .wireTap("direct:send-to-artemis")
         .to("direct:send-to-kafka");
 
         from("direct:send-to-kafka").routeId("send-to-kafka")
-            // .marshal().json()   // marshall message to send to kafka
+            .marshal().json()   // marshall message to send to kafka
             .setHeader("kafka.KEY", constant("Camel")) // Key of the message
         .to("kafka:"+KAFKA_TOPIC_RAW+"?brokers="+KAFKA_BOOTSTRAP_SERVERS);
 
-        from("direct:to-broker")
-            .log("sending message to message broker");
-            // .to("amqp:topic:chat-bot-raw");
+        from("direct:send-to-artemis")
+            .routeId("send-to-artemis")
+            .marshal().json()   // marshall message to send to artemis
+            .log(">>> Message sended to Artemis : ${body} - ${headers}")            
+        .to("jms:topic:"+ ARTEMIS_DESTINATION_NAME_RAW);
+             
 
         //Route that consumes message to kafka topic
         // from("kafka:"+KAFKA_TOPIC_RAW+"?brokers="+KAFKA_BOOTSTRAP_SERVERS+"&groupId=KAFKA_GROUP_ID")
