@@ -2,7 +2,7 @@
 
 This is a project that compares performance of AMQ Broker (ActiveMQ Artemis) and AMQ Streams (Strimzi - Kafka) in a simple scenario where messages don't require persistence.
 
-image::images/chatbot-kafka-artemis.png[chatbot architecture diagram]
+image::images/chatbot-kafka-artemis.jpg[chatbot architecture diagram]
 
 == Directory structure 
 
