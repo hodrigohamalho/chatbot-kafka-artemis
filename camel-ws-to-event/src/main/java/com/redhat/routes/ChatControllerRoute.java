@@ -1,5 +1,5 @@
 // camel-k: language=java dependency=mvn:org.apache.camel.quarkus:camel-quarkus-kafka
-package com.redhat.routeBuilder;
+package com.redhat.routes;
 
 import org.apache.camel.builder.RouteBuilder;
 import com.redhat.models.Message;
@@ -11,7 +11,7 @@ public class ChatControllerRoute extends RouteBuilder{
     protected String KAFKA_TOPIC_PROCESSED = "{{kafka.topic.raw}}";
     protected String KAFKA_BOOTSTRAP_SERVERS = "{{kafka.bootstrap.servers}}";
     protected String KAFKA_GROUP_ID = "{{kafka.group.id}}";
-    protected String ARTEMIS_DESTINATION_NAME_RAW = "{{quarkus.artemis.destinationName.raw}}";
+    protected String ARTEMIS_DESTINATION_NAME_RAW = "{{artemis.destinationName.raw}}";
 
     @Override
     public void configure() throws Exception {
