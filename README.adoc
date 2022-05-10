@@ -14,9 +14,18 @@ chatbot-kafka-artemis
 └───camel-ws-to-event-artemis - responsible to produce messages only in artemis
 ```
 
-== Running Tests
+== Running performance tests
 
 docker.io/lasher/artilharia
 
     artillery run performance-tests/artillery-plan.yaml
 
+== Scaling OpenShift Ingress Controller (HAProxy)
+
+[source,bash]
+----
+oc patch -n openshift-ingress-operator ingresscontroller/default --patch '{"spec":{"replicas": 3}}' --type=merge
+
+# Make sure it worked
+oc get -o yaml deployment/router-default -n openshift-ingress | grep replicas
+----
