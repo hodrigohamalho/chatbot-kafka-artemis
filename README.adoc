@@ -8,17 +8,20 @@ image::images/chatbot-kafka-artemis.jpg[chatbot architecture diagram]
 
 ```
 chatbot-kafka-artemis
-└───camel-ws-to-event - responsible to produce messages in kafka and artemis
-└───camel-quarkus-kafka-consumer - consumer for messages in kafka
-└───camel-quarkus-artemis-consumer - consumer for messages in artemis
-└───camel-ws-to-event-artemis - responsible to produce messages only in artemis
+└───> camel-ws-to-event - responsible to produce messages in kafka and artemis
+└───> camel-quarkus-kafka-consumer - consumer for messages in kafka
+└───> camel-quarkus-artemis-consumer - consumer for messages in artemis
+└───> camel-ws-to-event-artemis - responsible to produce messages only in artemis
 ```
 
 == Running performance tests
 
+[source,bash]
+----
 docker.io/lasher/artilharia
 
-    artillery run performance-tests/artillery-plan.yaml
+artillery run performance-tests/artillery-plan.yaml
+----
 
 == Scaling OpenShift Ingress Controller (HAProxy)
 
@@ -28,4 +31,105 @@ oc patch -n openshift-ingress-operator ingresscontroller/default --patch '{"spec
 
 # Make sure it worked
 oc get -o yaml deployment/router-default -n openshift-ingress | grep replicas
+----
+
+== Software deployment
+
+=== AMQ Streams (Kafka)
+
+==== Pre req AMQ Streams (Kafka)
+
+* Install AMQ Streams Operator
+
+==== AMQ Streams Customer Resource
+
+[source,yaml]
+----
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: kafka-camel
+spec:
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+  kafka:
+    config:
+      default.replication.factor: 3
+      inter.broker.protocol.version: '3.1'
+      min.insync.replicas: 2
+      offsets.topic.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      transaction.state.log.replication.factor: 3
+    listeners:
+      - name: plain
+        port: 9092
+        tls: false
+        type: internal
+      - name: tls
+        port: 9093
+        tls: true
+        type: internal
+    replicas: 3
+    storage:
+      type: ephemeral
+    version: 3.1.0
+  kafkaExporter: {}
+  zookeeper:
+    replicas: 3
+    storage:
+      type: ephemeral
+----
+
+=== AMQ Broker (ActiveMQ Artemis)
+
+==== Pre req AMQ Broker
+
+* Install AMQ Broker Operator
+* Install Fuse Console Operator
+
+==== AMQ Broker Customer Resource
+
+[source,yaml]
+----
+apiVersion: broker.amq.io/v2alpha4
+kind: ActiveMQArtemis
+metadata:
+  name: chat-bot-amq-broker
+  namespace: kafka-camel
+spec:
+  adminPassword: '123456'
+  adminUser: admin
+  console:
+    expose: true
+  deploymentPlan:
+    size: 3
+    persistenceEnabled: false
+    requireLogin: false
+    messageMigration: false
+    managementRBACEnabled: true
+    journalType: aio
+    jolokiaAgentEnabled: true
+    image: placeholder
+----
+
+[source,yaml]
+----
+apiVersion: hawt.io/v1alpha1
+kind: Hawtio
+metadata:
+  name: fuse-console
+  namespace: kafka-camel
+spec:
+  resources:
+    limits:
+      cpu: '1'
+      memory: 100Mi
+    requests:
+      cpu: 200m
+      memory: 32Mi
+  version: '1.10'
+  type: Namespace
+  replicas: 1
 ----
