@@ -108,9 +108,10 @@ spec:
     persistenceEnabled: false
     requireLogin: false
     messageMigration: false
-    managementRBACEnabled: true
+    managementRBACEnabled: false
     journalType: aio
     jolokiaAgentEnabled: true
+    enableMetricsPlugin: true
     image: placeholder
 ----
 
