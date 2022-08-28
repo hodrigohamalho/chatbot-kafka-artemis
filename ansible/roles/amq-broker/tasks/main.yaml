@@ -6,7 +6,7 @@
 - name: Evaluate AMQ Broker Subscription
   k8s:
     state: present
-    resource_definition: "{{ lookup('template', 'amq_subscription.yml.j2') }}"
+    resource_definition: "{{ lookup('template', 'amq-subscription.yml.j2') }}"
 
 - name: Wait for AMQ Broker Operator to be Running
   k8s_info:

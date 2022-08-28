@@ -1,14 +1,20 @@
+- name: Evaluate Kafka UI
+  k8s:
+    state: present
+    namespace: '{{ cluster_project }}'
+    resource_definition: "{{ lookup('template', 'kafka-ui-deployment.yml.j2') }}"
+
 - name: Evaluate Kafka Pod Monitor
   k8s:
     state: present
     namespace: '{{ cluster_project }}'
-    resource_definition: "{{ lookup('template', 'strimzi_pod_monitor.yml.j2') }}"
+    resource_definition: "{{ lookup('template', 'strimzi-pod_monitor.yml.j2') }}"
 
 - name: Evaluate Artemis Pod Monitor
   k8s:
     state: present
     namespace: '{{ cluster_project }}'
-    resource_definition: "{{ lookup('template', 'artemis_service_monitor.yml.j2') }}"
+    resource_definition: "{{ lookup('template', 'artemis-service-monitor.yml.j2') }}"
 
 - name: Get Grafana ServiceAccount
   k8s_info:
@@ -23,7 +29,7 @@
   delay: 15
 
 - name: Loop Secrets
-  include_tasks: tasks/loop_secrets.yml
+  include_tasks: tasks/loop-secrets.yml
   with_items: '{{ r_grafana_sa.resources[0].secrets }}'
 
 - name: Evaluate Grafana ServiceAccount permissons
@@ -46,16 +52,16 @@
 - name: Evaluate Grafana Datasource
   k8s:
     state: present
-    resource_definition: "{{ lookup('template', 'grafana_datasource.yml.j2') }}"
+    resource_definition: "{{ lookup('template', 'grafana-datasource.yml.j2') }}"
 
 - name: Evaluate Kafka Dashboard
   k8s:
     state: present
     namespace: '{{ cluster_project }}'
-    resource_definition: "{{ lookup('file', 'grafana_kafka_dashboard.yml') }}"
+    resource_definition: "{{ lookup('file', 'grafana-kafka-dashboard.yml') }}"
 
 - name: Evaluate Artemis Dashboard
   k8s:
     state: present
     namespace: '{{ cluster_project }}'
-    resource_definition: "{{ lookup('file', 'grafana_artemis_dashboard.yml') }}"
+    resource_definition: "{{ lookup('file', 'grafana-artemis-dashboard.yml') }}"

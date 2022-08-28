@@ -40,4 +40,4 @@
 - name: Evaluate Grafana Instance
   k8s:
     state: present
-    resource_definition: "{{ lookup('template', 'grafana_instance.yml.j2') }}"
+    resource_definition: "{{ lookup('template', 'grafana-instance.yml.j2') }}"
