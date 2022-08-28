@@ -8,7 +8,7 @@
   k8s:
     state: present
     namespace: '{{ cluster_project }}'
-    resource_definition: "{{ lookup('template', 'strimzi-pod_monitor.yml.j2') }}"
+    resource_definition: "{{ lookup('template', 'strimzi-pod-monitor.yml.j2') }}"
 
 - name: Evaluate Artemis Pod Monitor
   k8s:

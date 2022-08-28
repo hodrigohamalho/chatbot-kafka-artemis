@@ -26,7 +26,7 @@
         name: grafana-operator
         source: community-operators
         sourceNamespace: openshift-marketplace
-        startingCSV: grafana-operator.v4.2.0
+        startingCSV: grafana-operator.v4.6.0
 
 - name: Wait for Grafana Subscription to complete
   shell: set -o pipefail && oc get csv -n {{ cluster_project }} | grep grafana-operator
