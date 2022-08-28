@@ -1,0 +1,37 @@
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemis
+metadata:
+  name: {{ artemis_cluster_name }}
+spec:
+  deploymentPlan:
+    size: 3
+    image: placeholder
+    persistenceEnabled: true
+    messageMigration: true
+    requireLogin: false
+    enableMetricsPlugin: true
+  journalType: aio
+  adminUser: admin
+  adminPassword: admin
+  console:
+    expose: true
+  addressSettings:
+    applyRule: merge_all
+    addressSetting:
+    - match: '#'
+      deadLetterAddress: DLQ
+    - match: 'abc#'
+      deadLetterAddress: DLQABC
+      defaultConsumerWindowSize: 2048000
+      maxSizeBytes: '10m'
+    - match: 'jms'
+      deadLetterAddress: jmsdlq
+  resources:
+      limits:
+        cpu: "500m"
+        memory: "1024Mi"
+      requests:
+        cpu: "250m"
+        memory: "512Mi"
+
+

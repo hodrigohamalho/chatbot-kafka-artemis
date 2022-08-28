@@ -1,0 +1,61 @@
+- hosts: localhost
+  name: Install Camel Workshop
+  vars:
+    delete_workshop: false
+    insecure_skip_tls_verify: true
+    ocp_username: opentlc-mgr
+    debug_enable: false
+    cluster_project: amq-demo
+    grafana_user: admin
+    grafana_password: admin
+    kafka_cluster_name: my-cluster
+    artemis_cluster_name: artemis-broker
+  tasks:
+    - name: Define domain
+      set_fact:
+        domain : "{{ server | regex_replace('https://api.') | regex_replace(':6443') }}"
+
+    - name: Set route_subdomain
+      set_fact:
+        route_subdomain: "apps.{{ domain }}"
+
+    - name: Set console_url
+      set_fact:
+        console_url: "https://console-openshift-console.{{ route_subdomain }}"
+
+    - name: Log in as super user with token on OpenShift 4
+      command: "oc login --token={{ token }}  --server={{ server }} --insecure-skip-tls-verify={{ insecure_skip_tls_verify }}"
+      when:
+       - token is defined
+       - token is not none
+       - token|trim() != ""
+      ignore_errors: no
+
+    - name: create {{ cluster_project }} namespace
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: "{{ cluster_project }}"
+        state: present
+
+    - name: Provision AMQ Broker Operator
+      include_role:
+        name: amq-broker
+
+    - name: Provision AMQ Streams Operator
+      include_role:
+        name: amq-streams
+
+    - name: Provision Fuse Console Operator
+      include_role:
+        name: fuse-console
+
+    - name: Provision CamelK Operator
+      include_role:
+        name: camel-k
+
+    - name: Include Monitoring
+      include_role:
+        name: monitoring
+        
+

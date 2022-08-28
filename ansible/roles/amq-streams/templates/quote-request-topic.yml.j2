@@ -1,0 +1,12 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  labels:
+    strimzi.io/cluster: {{ kafka_cluster_name }}
+  name: a-quote-requests
+  namespace: {{ cluster_project }}
+spec:
+  config: {}
+  partitions: 1
+  replicas: 3
+  topicName: a_quote_requests
